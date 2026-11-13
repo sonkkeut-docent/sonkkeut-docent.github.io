@@ -1,28 +1,25 @@
 /* 레이아웃: 점자 한 칸(2×3)의 리듬을 그리드로 삼는다. 끈적한 헤더 → 점자 히어로 → 띠 모양 섹션. */
 :root{
-  --bg:#FFF9EB; --surface:#FFFFFF; --panel:#F4E8CF; --fg:#17130E; --muted:#5E574B; --line:#E4D7BD;
-  --red:#F61A00; --red-ink:#BF1400; --red-tint:#FFE6E0; --btn-bg:#BF1400; --btn-fg:#FFFFFF;
-  --blue:#39C7F9; --blue-ink:#07698D; --blue-tint:#DDF4FD; --dot-off:#E6D9BF; --scrim:rgba(23,19,14,.55);
+  /* 어두운 화면 고정 */
+  --bg:#15120E; --surface:#1F1B15; --panel:#2A241B; --fg:#F7F0E1; --muted:#BDB29D; --line:#3A3227;
+  --red:#FF4B2E; --red-ink:#FF7C63; --red-tint:#3B1A12; --btn-bg:#FF6E54; --btn-fg:#1A0805;
+  --blue:#4FD0FB; --blue-ink:#7FDBFF; --blue-tint:#10303C; --dot-off:#3A3227; --scrim:rgba(0,0,0,.7);
+  --band-fg:#FFFFFF; --focus:#7FDBFF;
   --font:"Pretendard Variable",Pretendard,"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --radius:14px; --maxw:1120px;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#15120E; --surface:#1F1B15; --panel:#2A241B; --fg:#F7F0E1; --muted:#BDB29D; --line:#3A3227;
-  --red:#FF4B2E; --red-ink:#FF7C63; --red-tint:#3B1A12; --btn-bg:#FF6E54; --btn-fg:#1A0805;
-  --blue:#4FD0FB; --blue-ink:#7FDBFF; --blue-tint:#10303C; --dot-off:#3A3227; --scrim:rgba(0,0,0,.7); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#15120E; --surface:#1F1B15; --panel:#2A241B; --fg:#F7F0E1; --muted:#BDB29D; --line:#3A3227;
-  --red:#FF4B2E; --red-ink:#FF7C63; --red-tint:#3B1A12; --btn-bg:#FF6E54; --btn-fg:#1A0805;
-  --blue:#4FD0FB; --blue-ink:#7FDBFF; --blue-tint:#10303C; --dot-off:#3A3227; --scrim:rgba(0,0,0,.7); color-scheme:dark}
 :root[data-contrast="high"]{
+  /* 고대비: 검정 바탕 + 흰 글자 + 노란 강조 (대비 19:1 이상) */
   --bg:#000000; --surface:#000000; --panel:#000000; --fg:#FFFFFF; --muted:#FFFFFF; --line:#FFFFFF;
   --red:#FFE600; --red-ink:#FFE600; --red-tint:#000000; --btn-bg:#FFE600; --btn-fg:#000000;
-  --blue:#FFE600; --blue-ink:#FFE600; --blue-tint:#000000; --dot-off:#4D4D4D; --scrim:rgba(0,0,0,.85); color-scheme:dark}
-html{font-size:100%}
+  --blue:#FFE600; --blue-ink:#FFE600; --blue-tint:#000000; --dot-off:#8A8A8A; --scrim:rgba(0,0,0,.9);
+  --band-fg:#FFE600; --focus:#FFE600; color-scheme:dark}
+html{font-size:100%;background:var(--bg)}
 body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:1rem;line-height:1.65;word-break:keep-all;overflow-wrap:break-word}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 a{color:inherit}
-:focus-visible{outline:3px solid var(--blue-ink);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
 [data-contrast="high"] :focus-visible{outline-color:#FFE600}
 .wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--btn-bg);color:var(--btn-fg);padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none}
@@ -65,20 +62,27 @@ p{margin:0}
 .cells{display:flex;gap:var(--cell-gap,10px)}
 .cell{display:grid;grid-template-columns:repeat(2,var(--dot,18px));grid-template-rows:repeat(3,var(--dot,18px));gap:var(--dot-gap,7px)}
 .dot{display:block;width:var(--dot,18px);height:var(--dot,18px);border-radius:50%;background:transparent;box-shadow:inset 0 0 0 2px var(--dot-off)}
-.dot.on{background:var(--red);box-shadow:none}
-.syl:nth-child(n+4) .dot.on{background:var(--blue)}
-[data-contrast="high"] .syl .dot.on{background:#FFE600}
+.dot.on{color:var(--red);background:currentColor;box-shadow:none}
+.syl:nth-child(n+4) .dot.on{color:var(--blue)}
 .gap{width:calc(var(--dot,18px)*1.2)}
 .syl-label{font-size:.85rem;font-weight:700;color:var(--muted)}
 .braille.sm{--dot:4px;--dot-gap:2px;--cell-gap:3px;--syl-gap:4px}
 .braille.sm .syl{gap:0}
 .braille.sm .dot{box-shadow:none;background:var(--dot-off)}
 .braille.sm .dot.on{background:var(--red)}
+.braille.sm .dot.on{color:var(--red)}
 .braille.sm .syl:nth-child(n+4) .dot.on{background:var(--blue)}
 .braille.lg{flex-wrap:nowrap;--dot:clamp(7px,2vw,20px);--dot-gap:clamp(3px,.8vw,8px);--cell-gap:clamp(5px,1.1vw,12px);--syl-gap:clamp(8px,2vw,24px)}
+/* 점자가 한 점씩 눌리며 입력되는 애니메이션 (동작 줄이기 설정 시 생략) */
 @media (prefers-reduced-motion:no-preference){
-  .braille.lg .dot.on{animation:press .5s cubic-bezier(.3,1.4,.5,1) both;animation-delay:calc(var(--i)*35ms)}
-  @keyframes press{from{transform:scale(.55)}to{transform:scale(1)}}
+  .braille.lg .dot.on{animation:braille-type .45s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(var(--i)*55ms + 150ms)}
+  .braille.lg .syl-label{animation:label-in .4s ease both;animation-delay:calc(var(--li)*350ms + 500ms)}
+  @keyframes braille-type{
+    0%{background:transparent;box-shadow:inset 0 0 0 2px var(--dot-off);transform:scale(.7)}
+    55%{background:currentColor;box-shadow:none;transform:scale(1.18)}
+    100%{background:currentColor;box-shadow:none;transform:scale(1)}
+  }
+  @keyframes label-in{from{opacity:.15;transform:translateY(4px)}to{opacity:1;transform:none}}
 }
 
 /* 공통 블록 */
@@ -112,10 +116,10 @@ main:focus{outline:none}
 .hero{padding-block:56px 48px;display:grid;gap:36px}
 .hero-top{display:flex;flex-direction:column;gap:14px}
 .hero .btn-row{margin-top:8px}
-.stat-band{background:var(--red);color:#fff}
+.stat-band{background:var(--red);color:var(--band-fg)}
 [data-contrast="high"] .stat-band{background:#000;color:#FFE600;border-block:2px solid #FFE600}
 .stat-band .wrap{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:20px 40px;align-items:center;padding-block:40px}
-.stat-num{font-size:clamp(3.4rem,10vw,6.5rem);font-weight:900;letter-spacing:-.05em;line-height:1}
+.stat-num{font-size:clamp(2.6rem,7vw,4.4rem);font-weight:900;letter-spacing:-.05em;line-height:1}
 .stat-text{display:flex;flex-direction:column;gap:6px}
 .stat-text strong{font-size:clamp(1.25rem,2.6vw,1.6rem);font-weight:900}
 .stat-text small{opacity:.85;font-size:.85rem}
@@ -285,3 +289,43 @@ figure.card{margin:0}
 .link-list li{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .link-list a{font-weight:700;color:var(--blue-ink)}
 .link-list span{font-size:.88rem;color:var(--muted)}
+
+/* 제목용 글꼴: 검은고딕 (로고 글자, 큰 제목, 섹션 제목, 큰 숫자에만 사용) */
+:root{--display:"Black Han Sans","Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.h-xl,.h-lg,.stat-num,.kpi .v,.brand-name,.timeline .m{font-family:var(--display);font-weight:400;letter-spacing:-.005em}
+.h-xl{letter-spacing:0}
+/* 고대비 모드에서는 획 간격이 넓은 Pretendard로 되돌림 (저시력 가독성) */
+[data-contrast="high"] .h-xl,[data-contrast="high"] .h-lg,[data-contrast="high"] .stat-num,[data-contrast="high"] .kpi .v,[data-contrast="high"] .brand-name,[data-contrast="high"] .timeline .m{font-family:"Pretendard Variable",Pretendard,sans-serif;font-weight:900}
+/* 메뉴 이동 시 제목으로 옮겨지는 포커스(화면낭독기용)의 테두리 숨김 */
+[data-focus]:focus{outline:none}
+
+/* ===== 고대비 모드: 저시력 사용자를 위한 확실한 지정 ===== */
+[data-contrast="high"] body{line-height:1.75}
+[data-contrast="high"] .card,[data-contrast="high"] .place,[data-contrast="high"] .feature,[data-contrast="high"] .flow li,
+[data-contrast="high"] .link-list li,[data-contrast="high"] .table-scroll,[data-contrast="high"] .empty,[data-contrast="high"] .callout,
+[data-contrast="high"] .docent-panel,[data-contrast="high"] dialog{border:2px solid #FFFFFF;background:#000000}
+[data-contrast="high"] .site-header{border-bottom:2px solid #FFFFFF}
+[data-contrast="high"] a{color:#FFE600;text-decoration:underline;text-underline-offset:3px}
+[data-contrast="high"] .btn,[data-contrast="high"] .nav a,[data-contrast="high"] .nav button,[data-contrast="high"] .tool,[data-contrast="high"] .chip{border:2px solid #FFFFFF;text-decoration:none}
+[data-contrast="high"] .btn-primary,[data-contrast="high"] .nav a[aria-current="page"],[data-contrast="high"] .tool[aria-pressed="true"],[data-contrast="high"] .chip[aria-pressed="true"]{background:#FFE600;color:#000000;border-color:#FFE600}
+[data-contrast="high"] .btn-ghost,[data-contrast="high"] .btn-soft,[data-contrast="high"] .nav .docent-link{background:#000000;color:#FFFFFF}
+[data-contrast="high"] .tag,[data-contrast="high"] .status,[data-contrast="high"] .soon-badge,[data-contrast="high"] .sup-list li{background:#000000;color:#FFE600;border:1.5px solid #FFE600}
+[data-contrast="high"] .eyebrow,[data-contrast="high"] .cite{color:#FFE600}
+[data-contrast="high"] .note,[data-contrast="high"] .place-src,[data-contrast="high"] .syl-label{color:#FFFFFF;font-weight:600}
+[data-contrast="high"] .meter{background:#000000;border:1.5px solid #FFFFFF;height:16px}
+[data-contrast="high"] .meter i{background:#FFE600}
+[data-contrast="high"] .meter.muted i{background:#FFFFFF}
+[data-contrast="high"] .cases tr.ours td{background:#000000;color:#FFE600}
+[data-contrast="high"] .stat-band{background:#000000;border-block:3px solid #FFE600}
+[data-contrast="high"] .timeline li::before{background:#000000;border-color:#FFFFFF}
+[data-contrast="high"] .timeline li.hot::before{background:#FFE600;border-color:#FFE600}
+[data-contrast="high"] .timeline::before{background:#FFFFFF}
+[data-contrast="high"] .dot{box-shadow:inset 0 0 0 2px #8A8A8A}
+[data-contrast="high"] .braille .dot.on,[data-contrast="high"] .braille .syl:nth-child(n+4) .dot.on{color:#FFE600;background:#FFE600}
+[data-contrast="high"] .toast{background:#FFE600;color:#000000;border:2px solid #000000}
+[data-contrast="high"] *:focus-visible{outline:4px solid #FFE600;outline-offset:3px}
+[data-contrast="high"] .nav a,[data-contrast="high"] .nav button,[data-contrast="high"] .brand,[data-contrast="high"] .brand-name{color:#FFFFFF;text-decoration:none}
+[data-contrast="high"] .brand-name span{color:#FFE600}
+[data-contrast="high"] .nav a[aria-current="page"]{color:#000000}
+[data-contrast="high"] a.btn-ghost,[data-contrast="high"] a.tool{color:#FFFFFF;text-decoration:none}
+[data-contrast="high"] a.btn-primary{color:#000000;text-decoration:none}
