@@ -1,5 +1,11 @@
 (function(){
   "use strict";
+
+  /* ===== 인스타그램 주소: 아래 따옴표 안에 계정 주소를 넣으면 메뉴·푸터·카드뉴스 버튼이 모두 연결됩니다 =====
+     예) var INSTAGRAM_URL = "https://www.instagram.com/sonkkeut_docent/";
+     비워 두면 "준비 중입니다"가 뜹니다. */
+  var INSTAGRAM_URL = "https://www.instagram.com/sonkkeut_docen/";
+
   var STATE={cardnews:[]};
   var app=document.getElementById("app");
   var VIEWS=["home","project","cardnews","team"];
@@ -25,6 +31,13 @@
 
   /* ---------- 레이아웃 ---------- */
   function soon(label,extra){return ' data-soon="'+esc(label)+'"'+(extra||"")}
+  function insta(cls,label,style){
+    var url=String(INSTAGRAM_URL||"").trim();
+    var c=cls?' class="'+cls+'"':'', st=style?' style="'+style+'"':'';
+    if(/^https:\/\/(www\.)?instagram\.com\//.test(url))
+      return '<a'+c+st+' href="'+esc(url)+'" target="_blank" rel="noopener" aria-label="'+esc(label)+' (새 창에서 열림)">'+esc(label)+'</a>';
+    return '<button type="button"'+c+soon("인스타그램")+'>'+esc(label)+'</button>';
+  }
   function shell(){
     return ''+
     '<a class="skip" href="#main" data-skip>본문 바로가기</a>'+
@@ -37,7 +50,7 @@
         '<li><a href="#cardnews" data-nav="cardnews">카드뉴스</a></li>'+
         '<li><button type="button"'+soon("활동 기록")+'>활동 기록</button></li>'+
         '<li><a href="#team" data-nav="team">팀 소개</a></li>'+
-        '<li><button type="button"'+soon("인스타그램")+'>인스타그램</button></li>'+
+        '<li>'+insta("","인스타그램")+'</li>'+
       '</ul></nav>'+
       '<div class="tools" role="group" aria-label="보기 설정">'+
         '<button type="button" class="tool" id="t-size" aria-label="글자 크기 바꾸기"><span aria-hidden="true">가</span><span class="tool-label"> 글자</span></button>'+
@@ -48,7 +61,7 @@
     '<main id="main" tabindex="-1"></main>'+
     '<footer class="site-footer"><div class="wrap">'+
       '<div class="stack" style="gap:6px"><strong>손끝 도슨트 · 썬덕걸즈</strong><p>롯데 밸유 for ESG 5기 봉사 프로젝트</p><p>이 사이트는 화면낭독기와 키보드만으로도 쓸 수 있도록 만들고 있습니다.</p></div>'+
-      '<div class="foot-links"><button type="button" class="tool"'+soon("인스타그램")+'>인스타그램</button><a class="tool" href="#cardnews" style="display:inline-flex;align-items:center;text-decoration:none">카드뉴스</a></div>'+
+      '<div class="foot-links">'+insta("tool","인스타그램",'display:inline-flex;align-items:center;text-decoration:none')+'<a class="tool" href="#cardnews" style="display:inline-flex;align-items:center;text-decoration:none">카드뉴스</a></div>'+
     '</div></footer>'+
     '<div class="toast" id="toast" role="status" aria-live="polite"><div><strong id="toast-title"></strong><span id="toast-msg"></span></div></div>'+
     '<dialog id="viewer" aria-labelledby="viewer-title"></dialog>';
@@ -187,7 +200,7 @@
     '<p class="lede">모든 장에 대체텍스트를 함께 올려, 화면낭독기로도 내용을 들을 수 있습니다.</p></div></div>'+
     '<section class="section" style="padding-top:24px" aria-label="카드뉴스 목록"><div class="wrap">'+
       '<div class="cn-toolbar"><p class="note">'+(list.length?'전체 '+list.length+'개':'')+'</p>'+
-        '<button type="button" class="btn btn-soft"'+soon("인스타그램")+'>인스타그램에서 보기</button></div>'+
+        insta("btn btn-soft","인스타그램에서 보기")+'</div>'+
       (list.length?'<div class="cn-grid">'+list.map(cnCard).join("")+'</div>':
         '<div class="empty">'+braille("sm",false)+'<h2 class="h-md">아직 올라온 카드뉴스가 없습니다</h2>'+
         '<p>'+(loadFailed?'카드뉴스 목록을 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요.':loaded?'12월 첫 활동 소식부터 이곳에 올라옵니다.':'카드뉴스를 불러오는 중입니다.')+'</p></div>')+
