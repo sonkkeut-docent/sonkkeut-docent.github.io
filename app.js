@@ -4,7 +4,7 @@
   /* ===== 인스타그램 주소: 아래 따옴표 안에 계정 주소를 넣으면 메뉴·푸터·카드뉴스 버튼이 모두 연결됩니다 =====
      예) var INSTAGRAM_URL = "https://www.instagram.com/sonkkeut_docent/";
      비워 두면 "준비 중입니다"가 뜹니다. */
-  var INSTAGRAM_URL = "https://www.instagram.com/sonkkeut_docen/";
+  var INSTAGRAM_URL = "https://www.instagram.com/sonkkeut_docent/";
 
   var STATE={cardnews:[]};
   var app=document.getElementById("app");
