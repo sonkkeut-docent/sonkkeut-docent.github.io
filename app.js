@@ -78,7 +78,9 @@
         '<h1 class="h-xl" tabindex="-1" data-focus>손끝 도슨트</h1>'+
         '<p class="lede">스스로 찾아가고, 손으로 감상하고, 직접 안내하는 배리어프리 미술관 프로젝트입니다.</p>'+
       '</div>'+
-      braille("lg",true)+
+      '<div class="braille-wrap">'+braille("lg",true)+
+        '<p class="a11y-note"><span class="a11y-dot" aria-hidden="true"></span>이 사이트는 화면낭독기와 키보드만으로도 쓸 수 있도록 만들고 있습니다.</p>'+
+      '</div>'+
       '<div class="btn-row">'+
         '<button type="button" class="btn btn-primary"'+soon("웹 도슨트")+'>웹 도슨트 시작하기</button>'+
         '<a class="btn btn-ghost" href="#project">프로젝트 알아보기</a>'+
