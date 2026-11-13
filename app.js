@@ -22,10 +22,10 @@
     return '<span class="cell">'+order.map(function(d){var on=code&(1<<(d-1));return '<i class="dot'+(on?' on':'')+'"'+(on?' style="--i:'+(idx*3+(n++))+'"':'')+'></i>'}).join("")+'</span>';
   }
   function braille(size,labels){
-    var k=0;
+    var k=0,li=0;
     return '<div class="braille '+size+'" role="img" aria-label="점자로 쓴 손끝 도슨트">'+WORD.map(function(w){
       if(!w)return '<span class="gap"></span>';
-      return '<span class="syl"><span class="cells">'+Array.from(w.c).map(function(ch){return cellHTML(ch,k++)}).join("")+'</span>'+(labels?'<span class="syl-label" aria-hidden="true">'+w.s+'</span>':'')+'</span>';
+      return '<span class="syl"><span class="cells">'+Array.from(w.c).map(function(ch){return cellHTML(ch,k++)}).join("")+'</span>'+(labels?'<span class="syl-label" aria-hidden="true" style="--li:'+(li++)+'">'+w.s+'</span>':'')+'</span>';
     }).join("")+'</div>';
   }
 
@@ -101,16 +101,24 @@
         '</div>'+
       '</div>'+
     '</div></section>'+
-    homeGuide()+
-    '<section class="section" aria-labelledby="cn-h"><div class="wrap">'+
-      '<div class="cn-toolbar"><div class="sec-head" style="margin:0"><span class="eyebrow">카드뉴스</span><h2 class="h-lg" id="cn-h">최근 소식</h2></div><a class="btn btn-ghost" href="#cardnews">전체 보기</a></div>'+
-      (latest.length?'<div class="cn-grid">'+latest.map(cnCard).join("")+'</div>':
-        '<div class="empty"><p>첫 카드뉴스를 준비하고 있습니다. 12월 첫 활동 소식부터 이곳에 올라옵니다.</p></div>')+
-    '</div></section>'+
+    '<div id="home-guide">'+homeGuide()+'</div>'+
+    '<div id="home-cn">'+homeCn()+'</div>'+
     '<section class="section" aria-labelledby="tl-h"><div class="wrap">'+
       '<div class="sec-head"><span class="eyebrow">일정</span><h2 class="h-lg" id="tl-h">이렇게 진행합니다</h2></div>'+
       timeline()+
     '</div></section>';
+  }
+  function homeCn(){
+    var latest=STATE.cardnews.slice(0,3);
+    return '<section class="section" aria-labelledby="cn-h"><div class="wrap">'+
+      '<div class="cn-toolbar"><div class="sec-head" style="margin:0"><span class="eyebrow">카드뉴스</span><h2 class="h-lg" id="cn-h">최근 소식</h2></div><a class="btn btn-ghost" href="#cardnews">전체 보기</a></div>'+
+      (latest.length?'<div class="cn-grid">'+latest.map(cnCard).join("")+'</div>':
+        '<div class="empty"><p>첫 카드뉴스를 준비하고 있습니다. 12월 첫 활동 소식부터 이곳에 올라옵니다.</p></div>')+
+    '</div></section>';
+  }
+  function refreshHome(){
+    var g=document.getElementById("home-guide"),n=document.getElementById("home-cn");
+    if(g)g.innerHTML=homeGuide(); if(n)n.innerHTML=homeCn();
   }
   function feature(n,title,desc){
     return '<button type="button" class="feature"'+soon(title)+'><span class="num" aria-hidden="true">'+n+'</span><span><b>'+title+'</b><span class="desc">'+desc+'</span></span><span class="soon-badge">준비 중</span></button>';
@@ -457,12 +465,12 @@
   /* ---------- 전시 정보 불러오기 ---------- */
   fetch("guide/places.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
     GUIDE.places=Array.isArray(d.places)?d.places.filter(function(p){return p&&p.title}):[];GUIDE.links=Array.isArray(d.links)?d.links:[];GUIDE.updated=d.updated||"";GUIDE.loaded=true;
-    if(current==="guide"||current==="home")route(false);
-  }).catch(function(){GUIDE.loaded=true;GUIDE.failed=true;if(current==="guide"||current==="home")route(false)});
+    if(current==="guide")route(false);else if(current==="home")refreshHome();
+  }).catch(function(){GUIDE.loaded=true;GUIDE.failed=true;if(current==="guide")route(false);else if(current==="home")refreshHome()});
   /* ---------- 카드뉴스 불러오기 ---------- */
   fetch("cardnews/posts.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
     var list=Array.isArray(d)?d:(d&&d.cardnews)||[];
     STATE.cardnews=list.filter(function(p){return p&&p.title&&Array.isArray(p.images)&&p.images.length}).sort(function(x,y){return String(y.date).localeCompare(String(x.date))});
-    loaded=true;if(current==="home"||current==="cardnews")route(false);
-  }).catch(function(){loadFailed=true;loaded=true;if(current==="home"||current==="cardnews")route(false)});
+    loaded=true;if(current==="cardnews")route(false);else if(current==="home")refreshHome();
+  }).catch(function(){loadFailed=true;loaded=true;if(current==="cardnews")route(false);else if(current==="home")refreshHome()});
 })();
