@@ -8,7 +8,7 @@
 
   var STATE={cardnews:[]};
   var app=document.getElementById("app");
-  var VIEWS=["home","project","guide","cardnews","team"];
+  var VIEWS=["home","project","guide","cardnews","activity","team"];
   var loaded=false, loadFailed=false;
 
   function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -49,7 +49,7 @@
         '<li><a href="#guide" data-nav="guide">전시 정보</a></li>'+
         '<li><button type="button" class="docent-link"'+soon("웹 도슨트")+'>웹 도슨트 <span class="soon-badge">준비 중</span></button></li>'+
         '<li><a href="#cardnews" data-nav="cardnews">카드뉴스</a></li>'+
-        '<li><button type="button"'+soon("활동 기록")+'>활동 기록</button></li>'+
+        '<li><a href="#activity" data-nav="activity">활동 기록</a></li>'+
         '<li><a href="#team" data-nav="team">팀 소개</a></li>'+
         '<li>'+insta("","인스타그램")+'</li>'+
       '</ul></nav>'+
@@ -350,6 +350,39 @@
   }
   function filteredPlacesAll(){var o={on:0,always:1,soon:2,ended:3};return GUIDE.places.filter(function(p){return placeStatus(p).k!=="ended"}).sort(function(a,b){return o[placeStatus(a).k]-o[placeStatus(b).k]})}
 
+  /* ---------- 화면: 활동 기록 ---------- */
+  var ACT={records:[],loaded:false,failed:false};
+  function fmtRange(a,b){if(!a)return "";var s=fmtDate(a);if(b&&b!==a){var x=a.split("-"),y=b.split("-");s+=" ~ "+(x[0]===y[0]?(x[1]===y[1]?y[2]:y[1]+"."+y[2]):fmtDate(b))}return s}
+  var photoSeq=0;
+  function photoFig(p){
+    var id="ph-"+(photoSeq++);
+    return '<figure class="photo">'+
+      '<button type="button" class="photo-img" data-alt-toggle="'+id+'" aria-label="사진 설명 보기"><img src="activity/'+esc(p.src)+'" alt="'+esc(p.alt||"")+'" loading="lazy"></button>'+
+      '<figcaption><span class="photo-cap">'+esc(p.caption||"")+'</span>'+
+      '<button type="button" class="alt-btn" data-alt-toggle="'+id+'" aria-expanded="false" aria-controls="'+id+'">사진 설명 보기</button></figcaption>'+
+      '<div class="alt-panel" id="'+id+'" hidden><strong>사진 설명</strong><p>'+esc(p.alt||"설명이 없습니다.")+'</p></div>'+
+    '</figure>';
+  }
+  function recordCard(r){
+    return '<article class="record" aria-labelledby="rec-'+esc(r.id)+'">'+
+      '<header class="record-head"><p class="record-meta"><time datetime="'+esc(r.date)+'">'+esc(fmtRange(r.date,r.end))+'</time>'+(r.place?' · '+esc(r.place):'')+'</p>'+
+      '<h2 class="h-lg" id="rec-'+esc(r.id)+'">'+esc(r.title)+'</h2>'+(r.summary?'<p class="lede">'+esc(r.summary)+'</p>':'')+'</header>'+
+      ((r.photos||[]).length?'<div class="photo-grid">'+r.photos.map(photoFig).join("")+'</div>':'')+
+      ((r.items||[]).length?'<h3 class="h-md record-sub">이렇게 진행했습니다</h3><ol class="record-items">'+r.items.map(function(it){return '<li><h4>'+esc(it.title)+'</h4><p>'+esc(it.text)+'</p></li>'}).join("")+'</ol>':'')+
+      ((r.next||[]).length?'<h3 class="h-md record-sub">다음 일정</h3><ul class="record-next">'+r.next.map(function(n){return '<li>'+esc(n)+'</li>'}).join("")+'</ul>':'')+
+    '</article>';
+  }
+  function viewActivity(){
+    photoSeq=0;
+    var list=ACT.records.slice().sort(function(a,b){return String(b.date).localeCompare(String(a.date))});
+    return ''+
+    '<div class="wrap hero" style="padding-bottom:8px"><div class="hero-top"><span class="eyebrow">활동 기록</span><h1 class="h-lg" tabindex="-1" data-focus>손끝 도슨트가 걸어온 길</h1>'+
+    '<p class="lede">행사와 봉사활동에서 한 일을 기록합니다. 사진마다 ‘사진 설명 보기’를 누르면 사진 내용을 글로 읽을 수 있습니다.</p></div></div>'+
+    '<section class="section" style="padding-top:24px" aria-label="활동 기록 목록"><div class="wrap records">'+
+      (list.length?list.map(recordCard).join(""):'<div class="empty"><p>'+(ACT.failed?'활동 기록을 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요.':ACT.loaded?'첫 활동 기록을 준비하고 있습니다.':'활동 기록을 불러오는 중입니다.')+'</p></div>')+
+    '</div></section>';
+  }
+
   /* ---------- 화면: 팀 ---------- */
   function viewTeam(){
     function m(name,school,role,does){return '<article class="card member"><span class="tag">'+role+'</span><h2 class="name">'+name+'</h2><p class="school">'+school+'</p><dl><dt>담당</dt><dd>'+does+'</dd></dl></article>'}
@@ -395,7 +428,7 @@
     var v=VIEWS.indexOf(h)>=0?h:"home";
     current=v;
     var main=document.getElementById("main");
-    main.innerHTML=v==="project"?viewProject():v==="guide"?viewGuide():v==="cardnews"?viewCardnews():v==="team"?viewTeam():viewHome();
+    main.innerHTML=v==="project"?viewProject():v==="guide"?viewGuide():v==="cardnews"?viewCardnews():v==="activity"?viewActivity():v==="team"?viewTeam():viewHome();
     if(v==="guide")renderGuideList();
     document.querySelectorAll("[data-nav]").forEach(function(a){if(a.getAttribute("data-nav")===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
     document.getElementById("nav").classList.remove("open");
@@ -458,12 +491,17 @@
     var gk=t.closest("[data-gkind]");if(gk){gFilter.kind=gk.getAttribute("data-gkind");document.querySelectorAll("[data-gkind]").forEach(function(b){b.setAttribute("aria-pressed",b===gk?"true":"false")});renderGuideList();return}
     var o=t.closest("[data-open]");if(o){openViewer(o.getAttribute("data-open"));return}
     var st=t.closest("[data-step]");if(st&&vPost){vIdx=Math.max(0,Math.min(vPost.images.length-1,vIdx+parseInt(st.getAttribute("data-step"),10)));renderViewer();var nb=document.querySelector('#viewer [data-step="'+st.getAttribute("data-step")+'"]');if(nb&&!nb.disabled)nb.focus();return}
+    var at=t.closest("[data-alt-toggle]");if(at){var pid=at.getAttribute("data-alt-toggle"),pn=document.getElementById(pid);if(pn){var show=pn.hidden;pn.hidden=!show;var btn=document.querySelector('.alt-btn[aria-controls="'+pid+'"]');if(btn){btn.setAttribute("aria-expanded",show?"true":"false");btn.textContent=show?"사진 설명 닫기":"사진 설명 보기"}var ib=document.querySelector('.photo-img[data-alt-toggle="'+pid+'"]');if(ib)ib.setAttribute("aria-label",show?"사진 설명 닫기":"사진 설명 보기")}return}
     var c=t.closest("[data-close]");if(c){var dl=c.closest("dialog");if(dl)dl.close();return}
   });
   document.addEventListener("keydown",function(e){
     var v=document.getElementById("viewer");
     if(v.open&&vPost&&(e.key==="ArrowRight"||e.key==="ArrowLeft")){var dir=e.key==="ArrowRight"?1:-1;var ni=vIdx+dir;if(ni>=0&&ni<vPost.images.length){vIdx=ni;renderViewer()}}
   });
+  /* ---------- 활동 기록 불러오기 ---------- */
+  fetch("activity/records.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
+    ACT.records=Array.isArray(d.records)?d.records.filter(function(x){return x&&x.title}):[];ACT.loaded=true;if(current==="activity")route(false);
+  }).catch(function(){ACT.loaded=true;ACT.failed=true;if(current==="activity")route(false)});
   /* ---------- 전시 정보 불러오기 ---------- */
   fetch("guide/places.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
     GUIDE.places=Array.isArray(d.places)?d.places.filter(function(p){return p&&p.title}):[];GUIDE.links=Array.isArray(d.links)?d.links:[];GUIDE.updated=d.updated||"";GUIDE.loaded=true;
