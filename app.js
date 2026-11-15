@@ -67,8 +67,8 @@
     '<div class="wrap partners"><h2 class="partners-label" id="partners-label">함께하는 기관</h2>'+
       '<ul class="partner-logos" aria-labelledby="partners-label">'+
         '<li><img src="partner-lotte.png" alt="롯데지주" width="401" height="128" loading="lazy"></li>'+
-        '<li><img src="partner-chest.png" alt="사랑의열매 사회복지공동모금회" width="524" height="128" loading="lazy"></li>'+
         '<li><img src="partner-kfhi.png" alt="희망친구 기아대책" width="414" height="128" loading="lazy"></li>'+
+        '<li><img src="partner-chest.png" alt="사랑의열매 사회복지공동모금회" width="524" height="128" loading="lazy"></li>'+
       '</ul></div>'+
     '</footer>'+
     '<div class="toast" id="toast" role="status" aria-live="polite"><div><strong id="toast-title"></strong><span id="toast-msg"></span></div></div>'+
