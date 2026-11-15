@@ -61,9 +61,16 @@
     '</div></header>'+
     '<main id="main" tabindex="-1"></main>'+
     '<footer class="site-footer"><div class="wrap">'+
-      '<div class="stack" style="gap:6px"><strong>손끝 도슨트 · 썬덕걸즈</strong><p>롯데 밸유 for ESG 5기 봉사 프로젝트</p><p>이 사이트는 화면낭독기와 키보드만으로도 쓸 수 있도록 만들고 있습니다.</p></div>'+
+      '<div class="stack" style="gap:6px"><strong>손끝 도슨트 · 썬덕걸즈</strong><p>롯데 밸유 for ESG 5기 봉사 프로젝트</p><p>이 사이트는 화면낭독기와 키보드만으로도 쓸 수 있도록 만들고 있습니다.</p><p class="credit">웹사이트 제작 · 마수민</p></div>'+
       '<div class="foot-links">'+insta("tool","인스타그램",'display:inline-flex;align-items:center;text-decoration:none')+'<a class="tool" href="#cardnews" style="display:inline-flex;align-items:center;text-decoration:none">카드뉴스</a></div>'+
-    '</div></footer>'+
+    '</div>'+
+    '<div class="wrap partners"><h2 class="partners-label" id="partners-label">함께하는 기관</h2>'+
+      '<ul class="partner-logos" aria-labelledby="partners-label">'+
+        '<li><img src="partner-lotte.png" alt="롯데지주" width="401" height="128" loading="lazy"></li>'+
+        '<li><img src="partner-chest.png" alt="사랑의열매 사회복지공동모금회" width="524" height="128" loading="lazy"></li>'+
+        '<li><img src="partner-kfhi.png" alt="희망친구 기아대책" width="414" height="128" loading="lazy"></li>'+
+      '</ul></div>'+
+    '</footer>'+
     '<div class="toast" id="toast" role="status" aria-live="polite"><div><strong id="toast-title"></strong><span id="toast-msg"></span></div></div>'+
     '<dialog id="viewer" aria-labelledby="viewer-title"></dialog>';
   }
@@ -126,7 +133,7 @@
     return '<button type="button" class="feature"'+soon(title)+'><span class="num" aria-hidden="true">'+n+'</span><span><b>'+title+'</b><span class="desc">'+desc+'</span></span><span class="soon-badge">준비 중</span></button>';
   }
   function timeline(){
-    var rows=[["11월","준비","협력 미술관 선정, 참여자 모집",false],["12월","1회차 봉사","동선 실측 답사, 손끝 아틀리에",true],["1월","2회차 봉사","오디오 도슨트 시범 운영, 전시·투어",true],["2~4월","확산","온라인 갤러리 공개, 4월 성과공유회",false]];
+    var rows=[["11월","준비","협력 미술관 선정, 참여자 모집",false],["12월","1·2회차 봉사","당사자 인터뷰, 동선 실측, 손끝 아틀리에",true],["1월","3회차 봉사","웹 오디오 도슨트 시범 운영, 전시·투어",true],["2~4월","확산","온라인 갤러리 공개, 4월 성과공유회",false]];
     return '<ol class="timeline">'+rows.map(function(r){return '<li'+(r[3]?' class="hot"':'')+'><span class="m">'+r[0]+'</span><span class="t">'+r[1]+'</span><span class="d">'+r[2]+'</span></li>'}).join("")+'</ol>';
   }
 
