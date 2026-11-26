@@ -444,6 +444,7 @@
     '</div></section>'+
     '<section class="section" aria-labelledby="dx-preview"><div class="wrap">'+
       '<div class="sec-head"><span class="eyebrow">미리 듣기</span><h2 class="h-lg" id="dx-preview">겨울 명화 음성해설</h2>'+
+      '<p>왜 겨울 명화일까요? 이번 전시의 작품 제작 주제가 ‘겨울’이라, 전시를 열기 전에 같은 주제의 널리 알려진 명화로 해설을 먼저 만들어 보았습니다. 관람객이 어떤 해설을 듣게 될지 미리 체험하고, 저희는 해설이 정확하고 듣기 쉬운지 점검하기 위해서입니다. 저작권이 끝났거나 공공누리로 공개된 작품만 골랐고, 전시 작품의 해설은 시범 운영 때 참여 작가의 목소리로 제공합니다.</p>'+
       '<p>시각장애인 관람객을 위한 해설을 AI로 초안을 쓰고, 팀이 그림과 하나하나 대조해 고쳤습니다. ‘해설 읽기’를 누르면 글로, ‘소리로 듣기’를 누르면 음성으로 감상할 수 있습니다.</p>'+
       '<p>AI 해설의 품질을 어떻게 쟀는지는 <a href="https://github.com/suminalliema/docent-lab" target="_blank" rel="noopener" style="color:inherit">해설 제작 과정(docent-lab, 새 창)</a>에서 볼 수 있습니다.</p></div>'+
       (list.length?'<ul class="dx-list" aria-label="해설 작품 목록">'+list.map(docentCard).join("")+'</ul>':
