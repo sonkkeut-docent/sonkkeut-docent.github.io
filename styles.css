@@ -200,6 +200,8 @@ main:focus{outline:none}
 .partner-logos{list-style:none;margin:0;padding:16px 0 4px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px 88px}
 .partner-logos li{display:flex;align-items:center}
 .partner-logos img{display:block;height:44px;width:auto;max-width:100%}
+.partner-logos a{display:block;padding:6px;border-radius:10px;transition:opacity .15s}
+.partner-logos a:hover{opacity:.75}
 @media (max-width:600px){.partner-logos{flex-direction:column;gap:22px}.partner-logos img{height:36px}}
 
 /* 토스트 */
