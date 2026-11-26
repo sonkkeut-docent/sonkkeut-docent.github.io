@@ -8,7 +8,8 @@
 
   var STATE={cardnews:[]};
   var app=document.getElementById("app");
-  var VIEWS=["home","project","guide","cardnews","activity","team"];
+  var VIEWS=["home","project","guide","docent","cardnews","activity","team"];
+  var DOC={artworks:[],updated:"",loaded:false,failed:false};
   var loaded=false, loadFailed=false;
 
   function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -47,7 +48,7 @@
         '<li><a href="#home" data-nav="home">홈</a></li>'+
         '<li><a href="#project" data-nav="project">프로젝트</a></li>'+
         '<li><a href="#guide" data-nav="guide">전시 정보</a></li>'+
-        '<li><button type="button" class="docent-link"'+soon("웹 도슨트")+'>웹 도슨트 <span class="soon-badge">준비 중</span></button></li>'+
+        '<li><a href="#docent" data-nav="docent">웹 도슨트</a></li>'+
         '<li><a href="#cardnews" data-nav="cardnews">카드뉴스</a></li>'+
         '<li><a href="#activity" data-nav="activity">활동 기록</a></li>'+
         '<li><a href="#team" data-nav="team">팀 소개</a></li>'+
@@ -89,7 +90,7 @@
         '<p class="a11y-note">이 사이트는 화면낭독기와 키보드만으로도 쓸 수 있도록 만들고 있습니다.</p>'+
       '</div>'+
       '<div class="btn-row">'+
-        '<button type="button" class="btn btn-primary"'+soon("웹 도슨트")+'>웹 도슨트 시작하기</button>'+
+        '<a class="btn btn-primary" href="#docent">웹 도슨트 시작하기</a>'+
         '<a class="btn btn-ghost" href="#project">프로젝트 알아보기</a>'+
       '</div>'+
     '</div>'+
@@ -427,6 +428,64 @@
     '</div></section>';
   }
 
+  /* ---------- 화면: 웹 도슨트 ---------- */
+  function viewDocent(){
+    var list=DOC.artworks;
+    return ''+
+    '<div class="wrap hero" style="padding-bottom:8px"><div class="hero-top"><span class="eyebrow">웹 도슨트</span><h1 class="h-lg" tabindex="-1" data-focus>손끝으로 찾고, 귀로 감상합니다</h1>'+
+    '<p class="lede">미술관 입구와 작품 옆 촉각 표식의 QR을 찍으면 길 안내와 작품 해설을 바로 들을 수 있는 안내 서비스입니다. 화면낭독기, 큰 글씨, 고대비 화면에 맞춰 만듭니다.</p></div></div>'+
+    '<section class="section" aria-labelledby="dx-plan"><div class="wrap">'+
+      '<div class="sec-head"><span class="eyebrow">2027년 1월 시범 운영 예정</span><h2 class="h-lg" id="dx-plan">미술관에서 쓸 기능</h2></div>'+
+      '<div class="feature-list">'+
+        feature(1,"찾아가는 길","입구에서 작품까지, 걸음 수로 안내합니다")+
+        feature(2,"작품 해설 듣기","참여 작가의 목소리로 녹음한 해설")+
+        feature(3,"촉각 표식 찾기","손으로 찾는 QR 표식의 위치 안내")+
+      '</div>'+
+    '</div></section>'+
+    '<section class="section" aria-labelledby="dx-preview"><div class="wrap">'+
+      '<div class="sec-head"><span class="eyebrow">미리 듣기</span><h2 class="h-lg" id="dx-preview">겨울 명화 음성해설</h2>'+
+      '<p>시각장애인 관람객을 위한 해설을 AI로 초안을 쓰고, 팀이 그림과 하나하나 대조해 고쳤습니다. ‘해설 읽기’를 누르면 글로, ‘소리로 듣기’를 누르면 음성으로 감상할 수 있습니다.</p>'+
+      '<p>AI 해설의 품질을 어떻게 쟀는지는 <a href="https://github.com/suminalliema/docent-lab" target="_blank" rel="noopener" style="color:inherit">해설 제작 과정(docent-lab, 새 창)</a>에서 볼 수 있습니다.</p></div>'+
+      (list.length?'<ul class="dx-list" aria-label="해설 작품 목록">'+list.map(docentCard).join("")+'</ul>':
+        '<div class="empty"><p>'+(DOC.failed||(DOC.loaded&&!list.length)?'팀이 해설을 검수하고 있습니다. 검수를 마친 작품부터 이곳에 올라옵니다.':'해설을 불러오는 중입니다.')+'</p></div>')+
+      (DOC.updated?'<p class="note">마지막 업데이트 '+esc(fmtDate(DOC.updated))+'</p>':'')+
+    '</div></section>';
+  }
+  function docentCard(a,i){
+    var id="dx-"+i, by=[a.artist,a.year].filter(Boolean).join(" · ");
+    var paras=String(a.description||"").split(/\n+/).filter(Boolean).map(function(t){return '<p>'+esc(t)+'</p>'}).join("");
+    var ai=a.ai||{}, review=(a.reviewedBy?esc(a.reviewedBy)+' 검수':'팀 검수')+(a.reviewedAt?' ('+esc(fmtDate(a.reviewedAt))+')':'');
+    return '<li class="dx-card card">'+
+      '<div class="dx-img"><img src="'+esc(a.image)+'" alt="'+esc(a.alt||a.title)+'" loading="lazy"></div>'+
+      '<div class="dx-body">'+
+        '<h3 class="h-md" id="'+id+'-t">'+esc(a.title)+'</h3>'+(by?'<p class="dx-by">'+esc(by)+'</p>':'')+
+        '<div class="btn-row">'+
+          '<button type="button" class="btn btn-ghost btn-sm" data-speak="'+i+'" aria-pressed="false" aria-describedby="'+id+'-t">소리로 듣기</button>'+
+        '</div>'+
+        '<details class="dx-text"><summary>해설 읽기</summary><div class="dx-desc">'+paras+'</div></details>'+
+        '<p class="dx-meta">AI 초안'+(ai.model?' ('+esc(ai.model)+')':'')+' → '+review+(ai.edited?' · 사람이 고침':'')+
+          (a.source?' · <a href="'+esc(a.source)+'" target="_blank" rel="noopener">이미지 출처 (새 창)</a>':'')+(a.license?' · '+esc(a.license):'')+'</p>'+
+      '</div></li>';
+  }
+  /* 소리로 듣기: 브라우저 내장 음성(Web Speech API) */
+  var speaking=null;
+  function stopSpeak(){
+    if(window.speechSynthesis)window.speechSynthesis.cancel();
+    if(speaking!==null){var b=document.querySelector('[data-speak="'+speaking+'"]');if(b){b.setAttribute("aria-pressed","false");b.textContent="소리로 듣기"}}
+    speaking=null;
+  }
+  function speak(i){
+    var a=DOC.artworks[i]; if(!a)return;
+    if(!("speechSynthesis" in window)){toast("소리로 듣기를 쓸 수 없습니다","이 브라우저는 음성 읽기를 지원하지 않습니다. 화면낭독기로 ‘해설 읽기’를 이용해 주세요.");return}
+    var same=speaking===i; stopSpeak(); if(same)return;
+    var u=new SpeechSynthesisUtterance(a.title+". "+String(a.description||"").replace(/\n+/g," "));
+    u.lang="ko-KR"; u.rate=0.95;
+    u.onend=u.onerror=function(){if(speaking===i)stopSpeak()};
+    speaking=i;
+    var b=document.querySelector('[data-speak="'+i+'"]');if(b){b.setAttribute("aria-pressed","true");b.textContent="멈추기"}
+    window.speechSynthesis.speak(u);
+  }
+
   /* ---------- 라우팅 ---------- */
   var current=null;
   function route(focus){
@@ -435,7 +494,8 @@
     var v=VIEWS.indexOf(h)>=0?h:"home";
     current=v;
     var main=document.getElementById("main");
-    main.innerHTML=v==="project"?viewProject():v==="guide"?viewGuide():v==="cardnews"?viewCardnews():v==="activity"?viewActivity():v==="team"?viewTeam():viewHome();
+    stopSpeak();
+    main.innerHTML=v==="project"?viewProject():v==="guide"?viewGuide():v==="docent"?viewDocent():v==="cardnews"?viewCardnews():v==="activity"?viewActivity():v==="team"?viewTeam():viewHome();
     if(v==="guide")renderGuideList();
     document.querySelectorAll("[data-nav]").forEach(function(a){if(a.getAttribute("data-nav")===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
     document.getElementById("nav").classList.remove("open");
@@ -499,12 +559,17 @@
     var o=t.closest("[data-open]");if(o){openViewer(o.getAttribute("data-open"));return}
     var st=t.closest("[data-step]");if(st&&vPost){vIdx=Math.max(0,Math.min(vPost.images.length-1,vIdx+parseInt(st.getAttribute("data-step"),10)));renderViewer();var nb=document.querySelector('#viewer [data-step="'+st.getAttribute("data-step")+'"]');if(nb&&!nb.disabled)nb.focus();return}
     var at=t.closest("[data-alt-toggle]");if(at){var pid=at.getAttribute("data-alt-toggle"),pn=document.getElementById(pid);if(pn){var show=pn.hidden;pn.hidden=!show;var btn=document.querySelector('.alt-btn[aria-controls="'+pid+'"]');if(btn){btn.setAttribute("aria-expanded",show?"true":"false");btn.textContent=show?"사진 설명 닫기":"사진 설명 보기"}var ib=document.querySelector('.photo-img[data-alt-toggle="'+pid+'"]');if(ib)ib.setAttribute("aria-label",show?"사진 설명 닫기":"사진 설명 보기")}return}
+    var sp=t.closest("[data-speak]");if(sp){speak(parseInt(sp.getAttribute("data-speak"),10));return}
     var c=t.closest("[data-close]");if(c){var dl=c.closest("dialog");if(dl)dl.close();return}
   });
   document.addEventListener("keydown",function(e){
     var v=document.getElementById("viewer");
     if(v.open&&vPost&&(e.key==="ArrowRight"||e.key==="ArrowLeft")){var dir=e.key==="ArrowRight"?1:-1;var ni=vIdx+dir;if(ni>=0&&ni<vPost.images.length){vIdx=ni;renderViewer()}}
   });
+  /* ---------- 웹 도슨트 해설 불러오기 ---------- */
+  fetch("docent/artworks.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
+    DOC.artworks=Array.isArray(d.artworks)?d.artworks.filter(function(a){return a&&a.title&&a.description}):[];DOC.updated=d.updated||"";DOC.loaded=true;if(current==="docent")route(false);
+  }).catch(function(){DOC.loaded=true;DOC.failed=true;if(current==="docent")route(false)});
   /* ---------- 활동 기록 불러오기 ---------- */
   fetch("activity/records.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){
     ACT.records=Array.isArray(d.records)?d.records.filter(function(x){return x&&x.title}):[];ACT.loaded=true;if(current==="activity")route(false);
